@@ -2,13 +2,21 @@
 
 import psycopg2
 
-def connect(database_name="news"):
+def connect():
     try:
-        conn = psycopg2.connect("dbname={}".format(database_name))
+        conn = psycopg2.connect("dbname=news")
         cur = conn.cursor()
         return conn, cur
     except:
-        print ("Error. Connection didn't work.")
+        "Could not connect."
+
+def create_views():
+    pass
 
 def first_question():
     conn, cur = connect()
+    cur.execute("select * from authors")
+    question_one = cur.fetchall()[3][0]
+    print question_one
+
+first_question()
