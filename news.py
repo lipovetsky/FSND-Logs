@@ -11,12 +11,17 @@ def connect():
         "Could not connect."
 
 def create_views():
+    conn, cur = connect()
     pass
+    cur.execute('create view ____ as')
+    conn.commit()
+    conn.close()
+
 
 def first_question():
     conn, cur = connect()
     cur.execute("select * from authors")
     question_one = cur.fetchall()[3][0]
-    print question_one
+    print (question_one)
 
 first_question()
