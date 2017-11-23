@@ -26,7 +26,12 @@ def first_question():
     from articles, log where status = '200 OK' and log.path like concat('%',articles.slug,'%')
     group by articles.title order by views desc;
     ''')
-    question_one = cur.fetchall()[3][0]
-    print ("The three most popular articles of all time are:" + question_one[1])
+    question_one = cur.fetchall()
+    print ("""The three most popular articles of all time are: \n
+    1. {} - {} views \n
+    2. {} - {} views \n
+    3. {} - {} views \n""".format(question_one[0][0], question_one[0][1],
+    question_one[1][0], question_one[1][1],
+    question_one[2][0], question_one[2][1]))
 
 first_question()
