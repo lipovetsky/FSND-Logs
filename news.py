@@ -10,32 +10,31 @@ def connect():
     except:
         "Could not connect."
 
-# def create_views():
-    # try:
-    #     conn, cur = connect()
-    #     cur.execute('''
-    #     create view okstatus as
-    #     select count(a.status),
-    #     count(b.status), a.time::DATE as date
-    #     from log as a, log as b
-    #     where a.time = b.time
-    #     where a.status != '200 OK'
-    #     and b.status != '200 OK'
-    #     group by date;
-    #     ''')
-    #     cur.execute('''
-    #     create view badstatus as
-    #     select count(a.status) as count1, count(b.status) as count2,
-    #     a.time::DATE as date
-    #     from log a, log b
-    #     where a.status = b.status
-    #     group by date
-    #     limit 50;
-    #     ''')
-    #     conn.commit()
-    #     conn.close()
-    # except psycopg2.Error:
-    #     pass
+def create_views():
+    try:
+        conn, cur = connect()
+        cur.execute('''
+        create view okstatus as
+        select count(status),
+        time::DATE as date
+        from log
+        where status = '200 OK'
+        group by date
+        order by date;
+        ''')
+        cur.execute('''
+        create view badstatus as
+        select count(status),
+        time::DATE as date
+        from log
+        where status != '200 OK'
+        group by date
+        order by date;
+        ''')
+        conn.commit()
+        conn.close()
+    except psycopg2.Error:
+        pass
 
 
 def first_question():
@@ -83,15 +82,40 @@ def second_question():
 def third_question():
     conn, cur = connect()
     cur.execute('''
-    select a.time, a.status, b.time, b.status
+    select okstatus.count, badstatus.count, okstatus.date
+    from okstatus, badstatus
+    order by okstatus.date;
+    ''')
+
+    cur.execute('''
+    select a.time::DATE,
+    count(a.status) as OK,
+    count(b.status) as BAD
     from log as a, log as b
-    where a.status != '200 OK'
-    and a.status = b.status
-    group by a.time, b.time, a.status, b.status,
-    order by a.time;
+    where a.id = b.id
+    group by a.time::DATE, a.status, b.status
+    having a.status = '200 OK'
+    or b.status != '200 OK'
+    order by a.time::DATE;
+
+    select count(status), time::DATE as date
+    from log
+    where status = '404 NOT FOUND'
+    group by date
+    order by date;
     ''')
     conn.close()
 
-# create_views()
+
+
+
+
+
+
+
+
+
+create_views()
 first_question()
 second_question()
+third_question()
