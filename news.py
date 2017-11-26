@@ -88,7 +88,9 @@ def third_question():
     ''')
 
     cur.execute('''
-    select a.time::DATE,
+    select sum(OK + BAD)
+    from
+    (select a.time::DATE,
     count(a.status) as OK,
     count(b.status) as BAD
     from log as a, log as b
@@ -96,7 +98,7 @@ def third_question():
     group by a.time::DATE, a.status, b.status
     having a.status = '200 OK'
     or b.status != '200 OK'
-    order by a.time::DATE;
+    order by a.time::DATE) as SUM;
 
     select count(status), time::DATE as date
     from log
