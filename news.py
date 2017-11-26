@@ -88,24 +88,25 @@ def third_question():
     ''')
 
     cur.execute('''
-    select sum(OK + BAD)
-    from
-    (select a.time::DATE,
+    select a.time::DATE,
+    count(a.status) as views,
+    count(a.status) as errors
+    from log a, log b
+    where a.id = b.id
+    group by a.time::DATE, a.status;
+
+    select distinct a.time::DATE,
     count(a.status) as OK,
     count(b.status) as BAD
-    from log as a, log as b
+    from log a, log b
     where a.id = b.id
     group by a.time::DATE, a.status, b.status
     having a.status = '200 OK'
     or b.status != '200 OK'
-    order by a.time::DATE) as SUM;
-
-    select count(status), time::DATE as date
-    from log
-    where status = '404 NOT FOUND'
-    group by date
-    order by date;
+    order by a.time::DATE;
     ''')
+
+
     conn.close()
 
 
