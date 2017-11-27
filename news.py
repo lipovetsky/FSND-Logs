@@ -88,12 +88,15 @@ def third_question():
     ''')
 
     cur.execute('''
-    select a.time::DATE,
-    count(a.status) as views,
-    count(a.status) as errors
-    from log a, log b
+    select a.time::DATE, count(yo)
+    from log a, log b,
+    (
+    select a.time::DATE, count(a.status) as yo
+    from log a
+    where a.status = '200 OK'
+    group by a.time::DATE) as goodviews
     where a.id = b.id
-    group by a.time::DATE, a.status;
+    group by a.time::DATE;
 
     select distinct a.time::DATE,
     count(a.status) as OK,
@@ -106,10 +109,20 @@ def third_question():
     order by a.time::DATE;
     ''')
 
+    cur.execute('''
+    select a.time::DATE, count(a.status) as OK,
+    count (a.status) as ERROR
+    from log a JOIN log b
+    on a.id = b.id
+    and a.status <> '200 OK'
+    group by a.time::DATE;
+    ''')
 
+join with Log c!!
     conn.close()
 
-
+where b.status <> '200 OK'
+and c.status <> '200 OK'
 
 
 
