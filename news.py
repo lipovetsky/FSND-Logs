@@ -3,6 +3,7 @@
 import psycopg2
 import datetime
 
+
 def connect():
     try:
         conn = psycopg2.connect("dbname=news")
@@ -10,6 +11,7 @@ def connect():
         return conn, cur
     except:
         "Could not connect."
+
 
 def first_question():
     conn, cur = connect()
@@ -25,11 +27,11 @@ def first_question():
     print ("""\nThe three most popular articles of all time are: \n
     1. "{}" - {} views
     2. "{}" - {} views
-    3. "{}" - {} views \n""".format(
-    question_one[0][0],question_one[0][1],
-    question_one[1][0], question_one[1][1],
-    question_one[2][0], question_one[2][1]))
+    3. "{}" - {} views \n""".format(question_one[0][0], question_one[0][1],
+                                    question_one[1][0], question_one[1][1],
+                                    question_one[2][0], question_one[2][1]))
     conn.close()
+
 
 def second_question():
     conn, cur = connect()
@@ -48,12 +50,12 @@ def second_question():
     1. {} - {} views
     2. {} - {} views
     3. {} - {} views
-    4. {} - {} views \n""".format(
-    question_two[0][0], question_two[0][1],
-    question_two[1][0], question_two[1][1],
-    question_two[2][0], question_two[2][1],
-    question_two[3][0], question_two[3][1]))
+    4. {} - {} views \n""".format(question_two[0][0], question_two[0][1],
+                                  question_two[1][0], question_two[1][1],
+                                  question_two[2][0], question_two[2][1],
+                                  question_two[3][0], question_two[3][1]))
     conn.close()
+
 
 def third_question():
     conn, cur = connect()
