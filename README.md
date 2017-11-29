@@ -43,7 +43,7 @@ your terminal:
 If that doesn't work, you need to install
 homebrew. Check the following site for more:
 
-[http://docs.python-guide.org/en/latest/starting/install3/osx/]
+http://docs.python-guide.org/en/latest/starting/install3/osx/
 
 Now that we have Python3 installed, all we
 have to do is run the following command:
