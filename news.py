@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import psycopg2
+import datetime
 
 def connect():
     try:
@@ -22,9 +23,10 @@ def first_question():
     ''')
     question_one = cur.fetchall()
     print ("""\nThe three most popular articles of all time are: \n
-    1. "{}" - {} views \n
-    2. "{}" - {} views \n
-    3. "{}" - {} views \n""".format(question_one[0][0], question_one[0][1],
+    1. "{}" - {} views
+    2. "{}" - {} views
+    3. "{}" - {} views \n""".format(
+    question_one[0][0],question_one[0][1],
     question_one[1][0], question_one[1][1],
     question_one[2][0], question_one[2][1]))
     conn.close()
@@ -43,10 +45,11 @@ def second_question():
     ''')
     question_two = cur.fetchall()
     print ("""The most popular authors are: \n
-    1. {} - {} views \n
-    2. {} - {} views \n
-    3. {} - {} views \n
-    4. {} - {} views \n""".format(question_two[0][0], question_two[0][1],
+    1. {} - {} views
+    2. {} - {} views
+    3. {} - {} views
+    4. {} - {} views \n""".format(
+    question_two[0][0], question_two[0][1],
     question_two[1][0], question_two[1][1],
     question_two[2][0], question_two[2][1],
     question_two[3][0], question_two[3][1]))
@@ -55,7 +58,11 @@ def second_question():
 def third_question():
     conn, cur = connect()
     cur.execute('''
-    select a.time::DATE, count(b.status) as OK,
+    select * from
+    (select (blue.date) as date,
+    (blue.error::decimal / (blue.ok + blue.error)) as result
+    from
+    (select a.time::DATE as DATE, count(b.status) as OK,
     count (c.status) as ERROR
     from log a
     LEFT JOIN log b
@@ -64,18 +71,16 @@ def third_question():
     LEFT JOIN log c
     on a.id = c.id
     and a.status <> '200 OK'
-    group by a.time::DATE;
+    group by a.time::DATE) as blue) as blue2
+    where blue2.result >= .01;
     ''')
+    question_three = cur.fetchall()
+    love = question_three[0][0].strftime("%B %d, %Y")
+    print ("""The days where more than 1% of the requests led to errors: \n
+    1. {} - {}% errors
+    """.format(love, round(question_three[0][1] * 100, 1)))
     conn.close()
 
-
-
-
-
-
-
-
-create_views()
 first_question()
 second_question()
 third_question()
